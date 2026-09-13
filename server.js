@@ -21,9 +21,15 @@ function createApp() {
     res.json({ status: 'ok' });
   });
 
-  app.get('/hello', (_req, res) => {
-    res.json({ message: 'Hello, world!' });
-  });
+  app.route('/hello')
+    .get((_req, res) => {
+      res.json({ message: 'hello' });
+    })
+    // Any other method on /hello is not allowed — 405 rather than falling
+    // through to Express's default 404.
+    .all((_req, res) => {
+      res.sendStatus(405);
+    });
 
   return app;
 }

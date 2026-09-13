@@ -37,7 +37,7 @@ test('GET / serves the static index page', async () => {
   }
 });
 
-test('GET /hello returns {"message":"Hello, world!"}', async () => {
+test('GET /hello returns {"message":"hello"} as JSON', async () => {
   const app = createApp();
   const server = app.listen(0);
   try {
@@ -45,7 +45,21 @@ test('GET /hello returns {"message":"Hello, world!"}', async () => {
     const res = await fetch(`http://127.0.0.1:${port}/hello`);
     assert.equal(res.status, 200);
     assert.match(res.headers.get('content-type'), /application\/json/);
-    assert.deepEqual(await res.json(), { message: 'Hello, world!' });
+    assert.deepEqual(await res.json(), { message: 'hello' });
+  } finally {
+    server.close();
+  }
+});
+
+test('non-GET methods on /hello return 405', async () => {
+  const app = createApp();
+  const server = app.listen(0);
+  try {
+    const { port } = server.address();
+    for (const method of ['POST', 'PUT', 'PATCH', 'DELETE']) {
+      const res = await fetch(`http://127.0.0.1:${port}/hello`, { method });
+      assert.equal(res.status, 405, `${method} /hello should be 405`);
+    }
   } finally {
     server.close();
   }
