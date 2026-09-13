@@ -1,0 +1,10 @@
+This branch exists so this repository always has a default branch.
+
+disposable-env/bin/reset-target-repository.js returns this repository to the
+empty state AI Gang's single-command startup pushes into. GitHub refuses to
+delete a repository's default branch, so the reset makes this branch the
+default and then deletes every other branch.
+
+It is permanent: every generation of the disposable test environment reuses it,
+nothing is ever pushed to it, and it shares no history with any branch a run
+created. Do not build on it, and do not delete it.
