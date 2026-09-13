@@ -21,6 +21,10 @@ function createApp() {
     res.json({ status: 'ok' });
   });
 
+  app.get('/hello', (_req, res) => {
+    res.json({ message: 'Hello, world!' });
+  });
+
   return app;
 }
 

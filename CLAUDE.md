@@ -1,23 +1,21 @@
 # e2e-web — Project Map
 
-<!-- Fill in each section before the first agent runs.
-     Agents use this file to locate files efficiently — keep it concise.
-     Update at the directory/pattern level when structure changes; not individual files. -->
-
 ## Framework / Runtime
-<!-- e.g. Node 22 + Express, plain HTML/CSS, React + Vite, Python 3.11 + FastAPI -->
+Node >=20 + Express 4 (CommonJS). No build step.
 
 ## Key Directories
-<!--
-- src/           — application source
--->
+- `public/` — static assets served at `/` by `express.static`
+- `test/` — `*.test.js`, one file per source module
 
 ## Entry Points
-<!-- e.g. src/index.html, src/index.js, src/app.py -->
+- `server.js` — `createApp()` builds the Express app (all routes registered here);
+  `start(port)` listens. Both are exported so tests can mount on an ephemeral port.
+- `public/index.html` — landing page
 
 ## Conventions
-<!-- Non-obvious patterns agents need to follow:
-     e.g. CSS modules, named exports only, all API responses wrapped in { data, error } -->
+- Routes are registered inside `createApp()` in `server.js`; JSON responses via `res.json(...)`.
+- Unused handler params are prefixed with `_` (e.g. `(_req, res)`).
+- Tests start the real app with `app.listen(0)` and make real `fetch` requests — no HTTP mocking.
 
 ## Test Framework
-<!-- e.g. Jest + React Testing Library, pytest, or "none configured" -->
+`node --test` (built-in `node:test` + `node:assert/strict`) — run with `npm test`.

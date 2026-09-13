@@ -36,3 +36,17 @@ test('GET / serves the static index page', async () => {
     server.close();
   }
 });
+
+test('GET /hello returns {"message":"Hello, world!"}', async () => {
+  const app = createApp();
+  const server = app.listen(0);
+  try {
+    const { port } = server.address();
+    const res = await fetch(`http://127.0.0.1:${port}/hello`);
+    assert.equal(res.status, 200);
+    assert.match(res.headers.get('content-type'), /application\/json/);
+    assert.deepEqual(await res.json(), { message: 'Hello, world!' });
+  } finally {
+    server.close();
+  }
+});
