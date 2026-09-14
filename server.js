@@ -13,12 +13,20 @@
 const path = require('node:path');
 const express = require('express');
 
+const { version } = require('./package.json');
+
 function createApp() {
   const app = express();
   app.use(express.static(path.join(__dirname, 'public')));
 
   app.get('/health', (_req, res) => {
     res.json({ status: 'ok' });
+  });
+
+  // Reports the running app's version, read from package.json so that stays
+  // the single source of truth for it.
+  app.get('/version', (_req, res) => {
+    res.json({ version });
   });
 
   return app;
