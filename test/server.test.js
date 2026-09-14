@@ -31,6 +31,7 @@ test('GET /version returns the package version as JSON', async () => {
     const { port } = server.address();
     const res = await fetch(`http://127.0.0.1:${port}/version`);
     assert.equal(res.status, 200);
+    assert.match(res.headers.get('content-type'), /application\/json/);
     assert.deepEqual(await res.json(), { version });
   } finally {
     server.close();
