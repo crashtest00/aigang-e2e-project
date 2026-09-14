@@ -9,6 +9,7 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { createApp } = require('../server');
+const { version } = require('../package.json');
 
 test('GET /health returns {"status":"ok"}', async () => {
   const app = createApp();
@@ -18,6 +19,25 @@ test('GET /health returns {"status":"ok"}', async () => {
     const res = await fetch(`http://127.0.0.1:${port}/health`);
     assert.equal(res.status, 200);
     assert.deepEqual(await res.json(), { status: 'ok' });
+  } finally {
+    server.close();
+  }
+});
+
+test('GET /version returns the package.json version string', async () => {
+  const app = createApp();
+  const server = app.listen(0);
+  try {
+    const { port } = server.address();
+    const res = await fetch(`http://127.0.0.1:${port}/version`);
+    assert.equal(res.status, 200);
+    const body = await res.json();
+    assert.deepEqual(body, { version });
+    // Guard the contract itself, not just the round-trip: a JSON string in
+    // semver shape, so a malformed manifest fails here rather than at a
+    // consumer.
+    assert.equal(typeof body.version, 'string');
+    assert.match(body.version, /^\d+\.\d+\.\d+/);
   } finally {
     server.close();
   }
