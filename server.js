@@ -13,12 +13,20 @@
 const path = require('node:path');
 const express = require('express');
 
+// Single source of truth for the version payload — keeps /version and the
+// published package metadata from drifting apart.
+const pkg = require('./package.json');
+
 function createApp() {
   const app = express();
   app.use(express.static(path.join(__dirname, 'public')));
 
   app.get('/health', (_req, res) => {
     res.json({ status: 'ok' });
+  });
+
+  app.get('/version', (_req, res) => {
+    res.json({ name: pkg.name, version: pkg.version });
   });
 
   return app;
