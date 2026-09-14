@@ -13,12 +13,20 @@
 const path = require('node:path');
 const express = require('express');
 
+const { version } = require('./package.json');
+
 function createApp() {
   const app = express();
   app.use(express.static(path.join(__dirname, 'public')));
 
   app.get('/health', (_req, res) => {
     res.json({ status: 'ok' });
+  });
+
+  // Version comes from package.json so there is a single source of truth and
+  // the endpoint cannot drift from the released package version.
+  app.get('/version', (_req, res) => {
+    res.json({ version });
   });
 
   return app;
