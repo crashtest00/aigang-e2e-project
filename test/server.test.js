@@ -38,14 +38,30 @@ test('GET / serves the static index page', async () => {
   }
 });
 
-test('GET /version returns the package version', async () => {
+test('GET /version returns the package version as JSON', async () => {
   const app = createApp();
   const server = app.listen(0);
   try {
     const { port } = server.address();
     const res = await fetch(`http://127.0.0.1:${port}/version`);
     assert.equal(res.status, 200);
+    assert.match(res.headers.get('content-type'), /^application\/json\b/);
     assert.deepEqual(await res.json(), { version: pkg.version });
+  } finally {
+    server.close();
+  }
+});
+
+test('non-GET methods on /version return 405', async () => {
+  const app = createApp();
+  const server = app.listen(0);
+  try {
+    const { port } = server.address();
+    for (const method of ['POST', 'PUT', 'PATCH', 'DELETE']) {
+      const res = await fetch(`http://127.0.0.1:${port}/version`, { method });
+      assert.equal(res.status, 405, `${method} /version`);
+      assert.equal(res.headers.get('allow'), 'GET, HEAD');
+    }
   } finally {
     server.close();
   }

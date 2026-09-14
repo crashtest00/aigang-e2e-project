@@ -27,6 +27,13 @@ function createApp() {
     res.json({ version });
   });
 
+  // Any other method on /version is not allowed. Registered after the GET
+  // handler so it only sees methods Express did not already route there.
+  app.all('/version', (_req, res) => {
+    res.set('Allow', 'GET, HEAD');
+    res.status(405).json({ error: 'Method Not Allowed' });
+  });
+
   return app;
 }
 
