@@ -9,6 +9,7 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { createApp } = require('../server');
+const { version } = require('../package.json');
 
 test('GET /health returns {"status":"ok"}', async () => {
   const app = createApp();
@@ -18,6 +19,24 @@ test('GET /health returns {"status":"ok"}', async () => {
     const res = await fetch(`http://127.0.0.1:${port}/health`);
     assert.equal(res.status, 200);
     assert.deepEqual(await res.json(), { status: 'ok' });
+  } finally {
+    server.close();
+  }
+});
+
+test('GET /version returns the package version as JSON', async () => {
+  const app = createApp();
+  const server = app.listen(0);
+  try {
+    const { port } = server.address();
+    const res = await fetch(`http://127.0.0.1:${port}/version`);
+    assert.equal(res.status, 200);
+    assert.match(res.headers.get('content-type'), /application\/json/);
+    assert.deepEqual(await res.json(), { version });
+    // Guard the contract itself: a non-empty string, not undefined/null
+    // silently serialised away by res.json().
+    assert.equal(typeof version, 'string');
+    assert.ok(version.length > 0);
   } finally {
     server.close();
   }
