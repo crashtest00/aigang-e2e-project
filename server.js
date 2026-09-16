@@ -3,7 +3,7 @@
 // AI Gang web deployment-target boilerplate.
 //
 // Deliberately minimal, but real: a working Express server serving a
-// static page and a health endpoint, the same role `expo init`/
+// static page plus health and version endpoints, the same role `expo init`/
 // `tauri create` play for their targets — a genuine starting point a new
 // project can build on immediately, not placeholder content.
 //
@@ -13,12 +13,20 @@
 const path = require('node:path');
 const express = require('express');
 
+// Single source of truth for the reported version — the package manifest, so
+// /version cannot drift from the artifact that was actually deployed.
+const { version } = require('./package.json');
+
 function createApp() {
   const app = express();
   app.use(express.static(path.join(__dirname, 'public')));
 
   app.get('/health', (_req, res) => {
     res.json({ status: 'ok' });
+  });
+
+  app.get('/version', (_req, res) => {
+    res.json({ version });
   });
 
   return app;
