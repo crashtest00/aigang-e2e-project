@@ -12,6 +12,7 @@
 
 const path = require('node:path');
 const express = require('express');
+const { version } = require('./package.json');
 
 function createApp() {
   const app = express();
@@ -19,6 +20,12 @@ function createApp() {
 
   app.get('/health', (_req, res) => {
     res.json({ status: 'ok' });
+  });
+
+  // Version is read from package.json so there is a single source of
+  // truth — bumping the package version is all that is needed here.
+  app.get('/version', (_req, res) => {
+    res.json({ version });
   });
 
   return app;
