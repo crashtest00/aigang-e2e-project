@@ -1,23 +1,26 @@
 # e2e-web — Project Map
 
-<!-- Fill in each section before the first agent runs.
-     Agents use this file to locate files efficiently — keep it concise.
-     Update at the directory/pattern level when structure changes; not individual files. -->
-
 ## Framework / Runtime
-<!-- e.g. Node 22 + Express, plain HTML/CSS, React + Vite, Python 3.11 + FastAPI -->
+Node 20+ with Express 4 (CommonJS). No build step, no frontend framework —
+the client is plain HTML/CSS/JS served statically.
 
 ## Key Directories
-<!--
-- src/           — application source
--->
+- `public/` — static assets served at the site root: `index.html`, `style.css`,
+  and one plain browser script per home-page feature (e.g. `counter.js`).
+- `test/` — `node:test` suites, one file per feature area.
 
 ## Entry Points
-<!-- e.g. src/index.html, src/index.js, src/app.py -->
+- `server.js` — exports `createApp()` / `start()`; `npm start` runs it on
+  `PORT` (default 3000).
+- `public/index.html` — the home page.
 
 ## Conventions
-<!-- Non-obvious patterns agents need to follow:
-     e.g. CSS modules, named exports only, all API responses wrapped in { data, error } -->
+- Browser scripts are plain IIFEs loaded from `index.html` with `defer`, and
+  bail out early if the elements they wire up are absent.
+- `server.js` exports `createApp()` so tests can mount it on an ephemeral
+  port instead of spawning a process.
 
 ## Test Framework
-<!-- e.g. Jest + React Testing Library, pytest, or "none configured" -->
+Node's built-in `node:test` — `npm test` runs `node --test`. Browser scripts
+have no DOM library available; they are exercised in a `node:vm` context
+against a minimal `document` stub (see `test/counter.test.js`).
