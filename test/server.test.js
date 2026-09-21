@@ -23,7 +23,7 @@ test('GET /health returns {"status":"ok"}', async () => {
   }
 });
 
-test('GET / serves the static index page', async () => {
+test('GET / serves the counter page with the brand logo above the counter', async () => {
   const app = createApp();
   const server = app.listen(0);
   try {
@@ -31,7 +31,25 @@ test('GET / serves the static index page', async () => {
     const res = await fetch(`http://127.0.0.1:${port}/`);
     assert.equal(res.status, 200);
     const body = await res.text();
-    assert.match(body, /Hello, web\./);
+    assert.match(body, /<img[^>]*src="\/logo\.png"[^>]*alt="[^"]+"/);
+    assert.match(body, /id="increment"/);
+    assert.ok(
+      body.indexOf('/logo.png') < body.indexOf('id="increment"'),
+      'the logo should be rendered above the counter'
+    );
+  } finally {
+    server.close();
+  }
+});
+
+test('GET /logo.png serves the brand logo', async () => {
+  const app = createApp();
+  const server = app.listen(0);
+  try {
+    const { port } = server.address();
+    const res = await fetch(`http://127.0.0.1:${port}/logo.png`);
+    assert.equal(res.status, 200);
+    assert.equal(res.headers.get('content-type'), 'image/png');
   } finally {
     server.close();
   }

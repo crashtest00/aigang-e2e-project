@@ -12,3 +12,10 @@ code {
   padding: 0.1rem 0.35rem;
   border-radius: 0.25rem;
 }
+
+.brand-logo {
+  display: block;
+  max-width: 8rem;
+  height: auto;
+  margin-bottom: 1rem;
+}

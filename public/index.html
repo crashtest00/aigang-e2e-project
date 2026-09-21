@@ -3,18 +3,28 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Hello Web</title>
+    <title>Click Counter</title>
     <link rel="stylesheet" href="/style.css" />
   </head>
   <body>
     <main>
-      <h1>Hello, web.</h1>
-      <p>
-        This is the AI Gang web deployment-target boilerplate — a real,
-        minimal, independently runnable and deployable starting point,
-        scaffolded by <code>scripts/init-repo.sh --deployment web</code>.
-      </p>
-      <p>Replace this page with your project. See <code>README.md</code>.</p>
+      <img class="brand-logo" src="/logo.png" alt="Brand logo" />
+      <h1>Click Counter</h1>
+      <p>You have clicked <span id="count">0</span> times.</p>
+      <button id="increment" type="button">Click me</button>
     </main>
+    <script>
+      // Plain client-side counter. Deliberately independent of the logo:
+      // it does not wait for, or reference, the image in any way, so the
+      // page still works if /logo.png fails to load.
+      (function () {
+        var count = 0;
+        var output = document.getElementById('count');
+        document.getElementById('increment').addEventListener('click', function () {
+          count += 1;
+          output.textContent = String(count);
+        });
+      })();
+    </script>
   </body>
 </html>
