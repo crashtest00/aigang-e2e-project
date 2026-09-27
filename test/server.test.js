@@ -36,3 +36,17 @@ test('GET / serves the static index page', async () => {
     server.close();
   }
 });
+
+test('GET /version returns the package.json version as JSON', async () => {
+  const app = createApp();
+  const server = app.listen(0);
+  try {
+    const { port } = server.address();
+    const res = await fetch(`http://127.0.0.1:${port}/version`);
+    assert.equal(res.status, 200);
+    assert.match(res.headers.get('content-type'), /application\/json/);
+    assert.deepEqual(await res.json(), { version: require('../package.json').version });
+  } finally {
+    server.close();
+  }
+});
