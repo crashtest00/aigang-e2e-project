@@ -12,6 +12,13 @@
 
 const path = require('node:path');
 const express = require('express');
+const { version: packageVersion } = require('./package.json');
+
+// The deployed version: APP_VERSION when the deployment sets it (e.g. a
+// build tag or commit SHA), otherwise the version in package.json.
+function getVersion() {
+  return process.env.APP_VERSION || packageVersion;
+}
 
 function createApp() {
   const app = express();
@@ -19,6 +26,10 @@ function createApp() {
 
   app.get('/health', (_req, res) => {
     res.json({ status: 'ok' });
+  });
+
+  app.get('/version', (_req, res) => {
+    res.json({ version: getVersion() });
   });
 
   return app;

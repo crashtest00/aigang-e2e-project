@@ -23,6 +23,40 @@ test('GET /health returns {"status":"ok"}', async () => {
   }
 });
 
+test('GET /version returns the package.json version by default', async () => {
+  const saved = process.env.APP_VERSION;
+  delete process.env.APP_VERSION;
+  const app = createApp();
+  const server = app.listen(0);
+  try {
+    const { port } = server.address();
+    const res = await fetch(`http://127.0.0.1:${port}/version`);
+    assert.equal(res.status, 200);
+    assert.match(res.headers.get('content-type'), /application\/json/);
+    assert.deepEqual(await res.json(), { version: require('../package.json').version });
+  } finally {
+    server.close();
+    if (saved !== undefined) process.env.APP_VERSION = saved;
+  }
+});
+
+test('GET /version prefers APP_VERSION when set', async () => {
+  const saved = process.env.APP_VERSION;
+  process.env.APP_VERSION = '1.2.3-test';
+  const app = createApp();
+  const server = app.listen(0);
+  try {
+    const { port } = server.address();
+    const res = await fetch(`http://127.0.0.1:${port}/version`);
+    assert.equal(res.status, 200);
+    assert.deepEqual(await res.json(), { version: '1.2.3-test' });
+  } finally {
+    server.close();
+    if (saved === undefined) delete process.env.APP_VERSION;
+    else process.env.APP_VERSION = saved;
+  }
+});
+
 test('GET / serves the static index page', async () => {
   const app = createApp();
   const server = app.listen(0);
