@@ -12,6 +12,7 @@
 
 const path = require('node:path');
 const express = require('express');
+const { version } = require('./package.json');
 
 function createApp() {
   const app = express();
@@ -19,6 +20,10 @@ function createApp() {
 
   app.get('/health', (_req, res) => {
     res.json({ status: 'ok' });
+  });
+
+  app.get('/version', (_req, res) => {
+    res.json({ version });
   });
 
   return app;
